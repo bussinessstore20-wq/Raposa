@@ -2,234 +2,338 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Raposa Caçadora</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Raposa Caçadora - Painel VIP</title>
   
-  <!-- Telegram WebApp SDK -->
+  <!-- SDK do Telegram & Ícones FontAwesome -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent-orange: #f97316;
-      --accent-orange-hover: #ea580c;
+      --bg-gradient: linear-gradient(135deg, #05070a 0%, #0d111a 100%);
+      --card-bg: rgba(15, 23, 36, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary-accent: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      --accent-glow: rgba(249, 115, 22, 0.45);
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --input-bg: #0f172a;
-      --border-color: #334155;
+      --text-sub: #94a3b8;
+      --input-bg: rgba(6, 10, 17, 0.9);
+      --input-border: rgba(255, 255, 255, 0.12);
+      --radius: 16px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-color);
+      background: var(--bg-gradient);
       color: var(--text-main);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       min-height: 100vh;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 420px;
+      padding: 20px 16px 30px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
-    .header {
-      text-align: center;
-      padding: 12px 0;
+    /* Header Profile */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 0;
     }
 
-    .header h1 {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--accent-orange);
+    /* Logo da Raposa com fundo quase preto para destaque máximo */
+    .brand-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #080b11;
+      border: 2px solid #f97316;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff, #fdba74);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    /* Cartões Glassmorphism */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fdba74;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .header p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
+    .field-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      margin-bottom: 18px;
     }
 
-    .label {
-      font-size: 0.85rem;
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      font-size: 0.82rem;
       font-weight: 600;
-      color: var(--text-main);
+      color: var(--text-sub);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .input-group {
+    /* Container Flex para Input + Botão de Colar ao Lado */
+    .input-wrapper-paste {
       display: flex;
       gap: 8px;
+      align-items: center;
     }
 
-    input[type="text"], input[type="number"] {
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    input, select {
       width: 100%;
-      padding: 12px;
-      background-color: var(--input-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      padding: 14px 14px 14px 42px;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
       color: var(--text-main);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.25s ease;
     }
 
-    input:focus {
-      border-color: var(--accent-orange);
+    input:focus, select:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
     }
 
-    .btn-paste {
-      background-color: var(--border-color);
-      color: var(--text-main);
-      border: none;
-      border-radius: 8px;
-      padding: 0 16px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    /* Estilo do Botão Colar */
+    .btn-colar {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid #f97316;
+      color: #fdba74;
+      padding: 14px 16px;
+      border-radius: 12px;
       font-size: 0.85rem;
-      white-space: nowrap;
-    }
-
-    .btn-paste:active {
-      opacity: 0.8;
-    }
-
-    .grid-presets {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .time-btn {
-      background-color: var(--input-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .time-btn.active {
-      background-color: var(--accent-orange);
-      border-color: var(--accent-orange);
-      color: #fff;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background-color: var(--accent-orange);
-      color: #fff;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .btn-colar:active {
+      transform: scale(0.95);
+      background: rgba(249, 115, 22, 0.3);
+    }
+
+    /* Grid de Botões de Atalhos de Tempo */
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin-top: 8px;
-      transition: background 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+
+    .time-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-sub);
+      padding: 10px 6px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .time-btn.active {
+      background: rgba(249, 115, 22, 0.2);
+      border-color: #f97316;
+      color: #f97316;
+    }
+
+    /* Botão Principal de Disparo */
+    .btn-submit {
+      width: 100%;
+      background: var(--primary-accent);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px var(--accent-glow);
+      transition: all 0.25s ease;
+      margin-top: 6px;
     }
 
     .btn-submit:active {
       transform: scale(0.98);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    
-    <!-- Cabeçalho -->
-    <div class="header">
-      <h1><i class="fa-solid fa-paw"></i> RAPOSA CAÇADORA</h1>
-      <p>Configuração de Postagens Automáticas</p>
+  <!-- Topo da Marca (Fundo Quase Preto no Círculo da Raposa) -->
+  <div class="brand-header">
+    <div class="brand-avatar">🦊</div>
+    <div class="brand-title">
+      <h1>Raposa Caçadora VIP</h1>
+      <p><span class="status-badge"></span> Sistema de Postagens Conectado</p>
+    </div>
+  </div>
+
+  <!-- Cartão do Formulário -->
+  <div class="card">
+    <div class="card-title">
+      <i class="fa-solid fa-sliders"></i> Painel de Automação
     </div>
 
-    <!-- Campo de Link -->
-    <div class="card">
-      <label class="label">
-        <i class="fa-solid fa-link" style="color: var(--accent-orange);"></i> Link da Vitrine / Oferta
-      </label>
-      <div class="input-group">
-        <input type="text" id="linkVitrine" placeholder="https://mercadolivre.com.br/sec/..." autocomplete="off">
-        <button class="btn-paste" onclick="colarLink()">
-          <i class="fa-regular fa-clipboard"></i> Colar
+    <!-- Campo URL da Vitrine (CAMPO VAZIO + BOTÃO DE COLAR AO LADO) -->
+    <div class="field-group">
+      <label><i class="fa-solid fa-link"></i> Link da Vitrine Mercado Livre</label>
+      <div class="input-wrapper-paste">
+        <div class="input-wrapper">
+          <i class="fa-solid fa-store"></i>
+          <input type="text" id="linkVitrine" placeholder="Cole aqui o link da vitrine..." value="">
+        </div>
+        <button class="btn-colar" onclick="colarLink()">
+          <i class="fa-solid fa-paste"></i> Colar
         </button>
       </div>
     </div>
 
-    <!-- Campo de Quantidade -->
-    <div class="card">
-      <label class="label">
-        <i class="fa-solid fa-boxes-stacked" style="color: var(--accent-orange);"></i> Quantidade de Ofertas
-      </label>
-      <input type="number" id="quantidade" value="5" min="1" max="50">
-    </div>
+    <!-- Campo Seleção de Tempo -->
+    <div class="field-group">
+      <label><i class="fa-solid fa-clock"></i> Tempo Entre Postagens</label>
+      <div class="input-wrapper">
+        <i class="fa-solid fa-stopwatch"></i>
+        <select id="intervalo">
+          <option value="10">10 Segundos (Modo Teste)</option>
+          <option value="30">30 Segundos</option>
+          <option value="60">1 Minuto</option>
+          <option value="300" selected>5 Minutos (Recomendado)</option>
+          <option value="1800">30 Minutos</option>
+          <option value="3600">1 Hora</option>
+        </select>
+      </div>
 
-    <!-- Campo de Intervalo -->
-    <div class="card">
-      <label class="label">
-        <i class="fa-solid fa-clock" style="color: var(--accent-orange);"></i> Intervalo entre Postagens
-      </label>
-      <input type="number" id="intervalo" value="300" placeholder="Tempo em segundos">
-      
-      <div class="grid-presets">
-        <div class="time-btn active" onclick="setTempo(10, this)">10 seg</div>
+      <!-- Atalhos Rápidos com 1 Toque -->
+      <div class="time-grid">
+        <div class="time-btn" onclick="setTempo(10, this)">10 seg</div>
         <div class="time-btn" onclick="setTempo(60, this)">1 min</div>
-        <div class="time-btn" onclick="setTempo(300, this)">5 min</div>
-        <div class="time-btn" onclick="setTempo(600, this)">10 min</div>
+        <div class="time-btn active" onclick="setTempo(300, this)">5 min</div>
       </div>
     </div>
 
-    <!-- Botão de Ação -->
-    <button class="btn-submit" onclick="enviarConfiguracao()">
-      <i class="fa-solid fa-paper-plane"></i> INICIAR POSTAGENS AUTO
-    </button>
+    <!-- Campo Quantidade de Itens -->
+    <div class="field-group">
+      <label><i class="fa-solid fa-layer-group"></i> Quantidade de Produtos</label>
+      <div class="input-wrapper">
+        <i class="fa-solid fa-hashtag"></i>
+        <input type="number" id="quantidade" value="5" min="1" max="50">
+      </div>
+    </div>
+  </div>
 
+  <!-- Botão Principal de Disparo -->
+  <button class="btn-submit" onclick="enviarConfiguracao()">
+    <i class="fa-solid fa-rocket"></i> INICIAR POSTAGENS AUTO
+  </button>
+
+  <div class="footer-note">
+    <i class="fa-solid fa-shield-halved"></i> Integração Oficial Telegram WebApp
   </div>
 
   <script>
@@ -237,47 +341,41 @@
     tg.expand();
     tg.ready();
 
-    // Tenta colar via Clipboard da Web / Fallback com foco
+    // Leitura automática do Clipboard ao clicar em Colar
     async function colarLink() {
-      const input = document.getElementById('linkVitrine');
       try {
         if (navigator.clipboard && navigator.clipboard.readText) {
           const texto = await navigator.clipboard.readText();
           if (texto) {
-            input.value = texto;
+            document.getElementById('linkVitrine').value = texto;
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            return;
+          } else {
+            document.getElementById('linkVitrine').focus();
           }
+        } else {
+          document.getElementById('linkVitrine').focus();
+          tg.showAlert("Toque e segure no campo para colar.");
         }
       } catch (err) {
-        // Se a permissão for negada pelo navegador, foca o campo para o usuário colar manualmente
-        input.focus();
-        input.select();
-        if (tg.showAlert) {
-          tg.showAlert("Cole manualmente segurando o dedo sobre o campo de texto.");
-        }
+        document.getElementById('linkVitrine').focus();
       }
     }
 
-    // Selecionador de tempo rápido
+    // Botões de Seleção Rápida de Tempo
     function setTempo(segundos, elemento) {
       document.getElementById('intervalo').value = segundos;
       document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
       elemento.classList.add('active');
     }
 
-    // Função de envio com feedback antes de fechar
+    // Disparo dos dados para o Python do Bot
     function enviarConfiguracao() {
       const link = document.getElementById('linkVitrine').value.trim();
       const intervalo = document.getElementById('intervalo').value;
       const quantidade = document.getElementById('quantidade').value;
 
       if (!link) {
-        if (tg.showAlert) {
-          tg.showAlert("Por favor, cole um link de vitrine válido antes de continuar!");
-        } else {
-          alert("Por favor, cole um link de vitrine válido antes de continuar!");
-        }
+        tg.showAlert("Por favor, cole o link da sua vitrine do Mercado Livre antes de iniciar!");
         return;
       }
 
@@ -285,22 +383,13 @@
         tg.HapticFeedback.impactOccurred('medium');
       }
 
-      // Envia a estrutura JSON diretamente para o escutador Python
       tg.sendData(JSON.stringify({
         link: link,
         intervalo: parseInt(intervalo),
         quantidade: parseInt(quantidade)
       }));
 
-      // Animação de sucesso no botão
-      const btnSubmit = document.querySelector('.btn-submit');
-      btnSubmit.innerHTML = '<i class="fa-solid fa-circle-check"></i> ENVIADO PARA A NUVEM!';
-      btnSubmit.style.background = '#22c55e';
-
-      // Aguarda 1.5s antes de fechar o Mini App
-      setTimeout(() => {
-        tg.close();
-      }, 1500);
+      tg.close();
     }
   </script>
 </body>
