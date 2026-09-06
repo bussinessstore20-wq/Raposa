@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
@@ -10,10 +11,8 @@
 
   <title>Raposa Caçadora - Painel VIP</title>
 
-  <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- FontAwesome -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -380,7 +379,6 @@
 
     input,
     select {
-
       width:
         100%;
 
@@ -412,7 +410,6 @@
 
     input:focus,
     select:focus {
-
       border-color:
         #f97316;
 
@@ -436,7 +433,6 @@
        ======================================================== */
 
     .btn-colar {
-
       background:
         rgba(249, 115, 22, 0.15);
 
@@ -479,7 +475,6 @@
 
 
     .btn-colar:active {
-
       transform:
         scale(0.95);
 
@@ -493,7 +488,6 @@
        ======================================================== */
 
     .time-grid {
-
       display:
         grid;
 
@@ -509,7 +503,6 @@
 
 
     .time-btn {
-
       background:
         var(--input-bg);
 
@@ -543,7 +536,6 @@
 
 
     .time-btn.active {
-
       background:
         rgba(249, 115, 22, 0.2);
 
@@ -560,7 +552,6 @@
        ======================================================== */
 
     .btn-submit {
-
       width:
         100%;
 
@@ -616,7 +607,6 @@
 
 
     .btn-submit:active {
-
       transform:
         scale(0.98);
 
@@ -627,7 +617,6 @@
 
 
     .btn-submit:disabled {
-
       opacity:
         0.7;
 
@@ -641,7 +630,6 @@
        ======================================================== */
 
     .mensagem {
-
       display:
         none;
 
@@ -663,7 +651,6 @@
 
 
     .mensagem.sucesso {
-
       display:
         block;
 
@@ -680,7 +667,6 @@
 
 
     .mensagem.erro {
-
       display:
         block;
 
@@ -701,7 +687,6 @@
        ======================================================== */
 
     .footer-note {
-
       text-align:
         center;
 
@@ -880,10 +865,7 @@
             1 Minuto
           </option>
 
-          <option
-            value="300"
-            selected
-          >
+          <option value="300" selected>
             5 Minutos (Recomendado)
           </option>
 
@@ -900,30 +882,31 @@
       </div>
 
 
-      <!-- ATALHOS -->
-
       <div class="time-grid">
 
-        <div
+        <button
+          type="button"
           class="time-btn"
           onclick="setTempo(10, this)"
         >
           10 seg
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           class="time-btn"
           onclick="setTempo(60, this)"
         >
           1 min
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           class="time-btn active"
           onclick="setTempo(300, this)"
         >
           5 min
-        </div>
+        </button>
 
       </div>
 
@@ -961,7 +944,6 @@
       </div>
 
     </div>
-
 
   </div>
 
@@ -1013,6 +995,10 @@
 
   <script>
 
+    /* ======================================================
+       TELEGRAM
+       ====================================================== */
+
     const tg =
       window.Telegram &&
       window.Telegram.WebApp
@@ -1021,7 +1007,7 @@
 
 
     /* ======================================================
-       INICIALIZA TELEGRAM
+       INICIALIZA
        ====================================================== */
 
     if (tg) {
@@ -1031,22 +1017,18 @@
       tg.expand();
 
       if (tg.setHeaderColor) {
-
         tg.setHeaderColor("#05070a");
-
       }
 
       if (tg.setBackgroundColor) {
-
         tg.setBackgroundColor("#05070a");
-
       }
 
     }
 
 
     /* ======================================================
-       MENSAGEM
+       MOSTRAR MENSAGEM
        ====================================================== */
 
     function mostrarMensagem(
@@ -1128,7 +1110,10 @@
       input.focus();
 
 
-      if (tg && tg.showAlert) {
+      if (
+        tg &&
+        tg.showAlert
+      ) {
 
         tg.showAlert(
           "Toque e segure no campo para colar o link."
@@ -1177,7 +1162,7 @@
 
 
     /* ======================================================
-       ATUALIZA BOTÕES QUANDO SELECT MUDA
+       ATUALIZA BOTÕES DO TEMPO
        ====================================================== */
 
     document
@@ -1207,24 +1192,33 @@
             );
 
 
-          const mapa = {
-            10: 0,
-            60: 1,
-            300: 2
-          };
+          const botoes =
+            document.querySelectorAll(
+              ".time-btn"
+            );
 
 
-          if (
-            mapa[valor] !== undefined
-          ) {
+          if (valor === 10) {
 
-            document
-              .querySelectorAll(
-                ".time-btn"
-              )[mapa[valor]]
-              .classList.add(
-                "active"
-              );
+            botoes[0]
+              .classList
+              .add("active");
+
+          }
+
+          else if (valor === 60) {
+
+            botoes[1]
+              .classList
+              .add("active");
+
+          }
+
+          else if (valor === 300) {
+
+            botoes[2]
+              .classList
+              .add("active");
 
           }
 
@@ -1237,135 +1231,43 @@
        ====================================================== */
 
     async function enviarConfiguracao() {
-    const btnSubmit = document.querySelector('.btn-submit');
 
-    const link = document
-        .getElementById('linkVitrine')
-        .value
-        .trim();
-
-    const intervalo = parseInt(
-        document.getElementById('intervalo').value
-    );
-
-    const quantidade = parseInt(
-        document.getElementById('quantidade').value
-    );
-
-    if (!link) {
-        tg.showAlert(
-            "Por favor, cole o link da sua vitrine do Mercado Livre."
-        );
-        return;
-    }
-
-    if (!tg.initData) {
-        tg.showAlert(
-            "❌ Não foi possível obter a autenticação do Telegram."
-        );
-        return;
-    }
-
-    const payload = {
-        link: link,
-        intervalo: intervalo,
-        quantidade: quantidade,
-        initData: tg.initData
-    };
-
-    if (tg.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred('medium');
-    }
-
-    btnSubmit.disabled = true;
-
-    btnSubmit.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
-
-    try {
-
-        const response = await fetch(
-            "https://bot-raposa-cacadora.onrender.com/api/configurar",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify(payload)
-            }
+      const btn =
+        document.getElementById(
+          "btnSubmit"
         );
 
-        const texto = await response.text();
+      const link =
+        document
+          .getElementById(
+            "linkVitrine"
+          )
+          .value
+          .trim();
 
-        console.log("Resposta do servidor:", texto);
 
-        let resultado;
-
-        try {
-            resultado = JSON.parse(texto);
-        } catch (jsonError) {
-
-            console.error(
-                "Servidor não retornou JSON:",
-                texto
-            );
-
-            throw new Error(
-                "O servidor retornou uma resposta inválida."
-            );
-        }
-
-        if (!response.ok || !resultado.ok) {
-            throw new Error(
-                resultado.erro ||
-                "Não foi possível iniciar as postagens."
-            );
-        }
-
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred(
-                'success'
-            );
-        }
-
-        tg.showAlert(
-            "✅ Postagens iniciadas com sucesso!"
+      const intervalo =
+        parseInt(
+          document
+            .getElementById(
+              "intervalo"
+            )
+            .value
         );
 
-        btnSubmit.innerHTML =
-            '<i class="fa-solid fa-check"></i> POSTAGENS INICIADAS';
 
-        setTimeout(() => {
-            tg.close();
-        }, 1500);
-
-    } catch (erro) {
-
-        console.error(
-            "❌ Erro ao enviar configuração:",
-            erro
+      const quantidade =
+        parseInt(
+          document
+            .getElementById(
+              "quantidade"
+            )
+            .value
         );
 
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred(
-                'error'
-            );
-        }
 
-        tg.showAlert(
-            "❌ " + erro.message
-        );
-
-        btnSubmit.disabled = false;
-
-        btnSubmit.innerHTML =
-            '<i class="fa-solid fa-rocket"></i> INICIAR POSTAGENS AUTO';
-    }
-}
       /* ----------------------------------------------------
-         VALIDAÇÕES
+         VERIFICA LINK
          ---------------------------------------------------- */
 
       if (!link) {
@@ -1375,10 +1277,25 @@
           "erro"
         );
 
+        if (
+          tg &&
+          tg.showAlert
+        ) {
+
+          tg.showAlert(
+            "Cole o link da vitrine antes de iniciar."
+          );
+
+        }
+
         return;
 
       }
 
+
+      /* ----------------------------------------------------
+         VERIFICA QUANTIDADE
+         ---------------------------------------------------- */
 
       if (
         !Number.isInteger(
@@ -1399,7 +1316,7 @@
 
 
       /* ----------------------------------------------------
-         TELEGRAM
+         VERIFICA TELEGRAM
          ---------------------------------------------------- */
 
       if (!tg) {
@@ -1414,6 +1331,10 @@
       }
 
 
+      /* ----------------------------------------------------
+         INIT DATA
+         ---------------------------------------------------- */
+
       const initData =
         tg.initData || "";
 
@@ -1424,6 +1345,14 @@
           "❌ Não foi possível obter a autenticação do Telegram.",
           "erro"
         );
+
+        if (tg.showAlert) {
+
+          tg.showAlert(
+            "Abra o painel pelo Telegram para continuar."
+          );
+
+        }
 
         return;
 
@@ -1487,7 +1416,7 @@
       try {
 
         /* --------------------------------------------------
-           REQUISIÇÃO PARA O FLASK
+           ENVIA PARA O MESMO SERVIDOR
            -------------------------------------------------- */
 
         const resposta =
@@ -1512,12 +1441,41 @@
           );
 
 
-        const resultado =
-          await resposta.json();
+        /* --------------------------------------------------
+           LÊ RESPOSTA
+           -------------------------------------------------- */
+
+        const texto =
+          await resposta.text();
+
+
+        console.log(
+          "Resposta do servidor:",
+          texto
+        );
+
+
+        let resultado;
+
+
+        try {
+
+          resultado =
+            JSON.parse(
+              texto
+            );
+
+        } catch (erroJson) {
+
+          throw new Error(
+            "O servidor retornou uma resposta inválida."
+          );
+
+        }
 
 
         /* --------------------------------------------------
-           ERRO
+           VERIFICA ERRO
            -------------------------------------------------- */
 
         if (
@@ -1527,7 +1485,7 @@
 
           throw new Error(
             resultado.erro ||
-            "Não foi possível iniciar."
+            "Não foi possível iniciar as postagens."
           );
 
         }
@@ -1556,14 +1514,28 @@
         }
 
 
+        if (tg.showAlert) {
+
+          tg.showAlert(
+            "✅ Postagens iniciadas com sucesso!"
+          );
+
+        }
+
+
+        btn.innerHTML =
+          '<i class="fa-solid fa-check"></i> POSTAGENS INICIADAS';
+
+
         /* --------------------------------------------------
-           FECHA O MINI APP
+           FECHA MINI APP
            -------------------------------------------------- */
 
         setTimeout(
           function() {
 
             if (
+              tg &&
               tg.close
             ) {
 
@@ -1579,7 +1551,7 @@
       } catch (erro) {
 
         console.error(
-          "Erro:",
+          "❌ Erro:",
           erro
         );
 
@@ -1595,6 +1567,7 @@
 
 
         if (
+          tg &&
           tg.HapticFeedback
         ) {
 
@@ -1606,7 +1579,21 @@
         }
 
 
-      } finally {
+        if (
+          tg &&
+          tg.showAlert
+        ) {
+
+          tg.showAlert(
+            "❌ " +
+            (
+              erro.message ||
+              "Erro ao enviar configuração."
+            )
+          );
+
+        }
+
 
         btn.disabled =
           false;
@@ -1621,4 +1608,5 @@
   </script>
 
 </body>
+
 </html>
