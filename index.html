@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raposa Caçadora - Auto Post</title>
+  <title>Painel Raposa Caçadora</title>
   
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -180,11 +183,13 @@
 
   <div class="container">
     
+    <!-- Cabeçalho -->
     <div class="header">
       <h1><i class="fa-solid fa-paw"></i> RAPOSA CAÇADORA</h1>
       <p>Configuração de Postagens Automáticas</p>
     </div>
 
+    <!-- Campo de Link -->
     <div class="card">
       <label class="label">
         <i class="fa-solid fa-link" style="color: var(--accent-orange);"></i> Link da Vitrine / Oferta
@@ -197,6 +202,7 @@
       </div>
     </div>
 
+    <!-- Campo de Quantidade -->
     <div class="card">
       <label class="label">
         <i class="fa-solid fa-boxes-stacked" style="color: var(--accent-orange);"></i> Quantidade de Ofertas
@@ -204,6 +210,7 @@
       <input type="number" id="quantidade" value="5" min="1" max="50">
     </div>
 
+    <!-- Campo de Intervalo -->
     <div class="card">
       <label class="label">
         <i class="fa-solid fa-clock" style="color: var(--accent-orange);"></i> Intervalo entre Postagens
@@ -218,7 +225,8 @@
       </div>
     </div>
 
-    <button class="btn-submit" id="btnSubmit" onclick="enviarConfiguracao()">
+    <!-- Botão de Ação -->
+    <button class="btn-submit" onclick="enviarConfiguracao()">
       <i class="fa-solid fa-paper-plane"></i> INICIAR POSTAGENS AUTO
     </button>
 
@@ -229,6 +237,7 @@
     tg.expand();
     tg.ready();
 
+    // Tenta colar via Clipboard da Web / Fallback com foco
     async function colarLink() {
       const input = document.getElementById('linkVitrine');
       try {
@@ -241,6 +250,7 @@
           }
         }
       } catch (err) {
+        // Se a permissão for negada pelo navegador, foca o campo para o usuário colar manualmente
         input.focus();
         input.select();
         if (tg.showAlert) {
@@ -249,18 +259,18 @@
       }
     }
 
+    // Selecionador de tempo rápido
     function setTempo(segundos, elemento) {
       document.getElementById('intervalo').value = segundos;
       document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
       elemento.classList.add('active');
     }
 
-    // CORREÇÃO EXCLUSIVA DO BOTÃO ENVIAR (Sem alterar o layout)
-    async function enviarConfiguracao() {
+    // Função de envio com feedback antes de fechar
+    function enviarConfiguracao() {
       const link = document.getElementById('linkVitrine').value.trim();
       const intervalo = document.getElementById('intervalo').value;
       const quantidade = document.getElementById('quantidade').value;
-      const btnSubmit = document.getElementById('btnSubmit');
 
       if (!link) {
         if (tg.showAlert) {
@@ -271,44 +281,26 @@
         return;
       }
 
-      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO PARA A NUVEM...';
-      btnSubmit.disabled = true;
-
-      try {
-        const resposta = await fetch('https://bot-raposa-cacadora.onrender.com/api/ordem', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            link: link,
-            intervalo: parseInt(intervalo),
-            quantidade: parseInt(quantidade)
-          })
-        });
-
-        if (resposta.ok) {
-          btnSubmit.innerHTML = '<i class="fa-solid fa-circle-check"></i> ORDEM INICIADA COM SUCESSO!';
-          btnSubmit.style.background = '#22c55e';
-          
-          if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-
-          setTimeout(() => {
-            tg.close();
-          }, 1500);
-        } else {
-          throw new Error('Erro na resposta do servidor');
-        }
-      } catch (erro) {
-        btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane"></i> INICIAR POSTAGENS AUTO';
-        btnSubmit.disabled = false;
-        
-        if (tg.showAlert) {
-          tg.showAlert("Erro ao conectar com a nuvem. Tente novamente.");
-        } else {
-          alert("Erro ao conectar com a nuvem. Tente novamente.");
-        }
+      if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('medium');
       }
+
+      // Envia a estrutura JSON diretamente para o escutador Python
+      tg.sendData(JSON.stringify({
+        link: link,
+        intervalo: parseInt(intervalo),
+        quantidade: parseInt(quantidade)
+      }));
+
+      // Animação de sucesso no botão
+      const btnSubmit = document.querySelector('.btn-submit');
+      btnSubmit.innerHTML = '<i class="fa-solid fa-circle-check"></i> ENVIADO PARA A NUVEM!';
+      btnSubmit.style.background = '#22c55e';
+
+      // Aguarda 1.5s antes de fechar o Mini App
+      setTimeout(() => {
+        tg.close();
+      }, 1500);
     }
   </script>
 </body>
