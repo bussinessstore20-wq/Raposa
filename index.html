@@ -383,13 +383,16 @@
         tg.HapticFeedback.impactOccurred('medium');
       }
 
-      tg.sendData(JSON.stringify({
-        link: link,
-        intervalo: parseInt(intervalo),
-        quantidade: parseInt(quantidade)
-      }));
-
-      tg.close();
+      try {
+        tg.sendData(JSON.stringify({
+          link: link,
+          intervalo: parseInt(intervalo),
+          quantidade: parseInt(quantidade)
+        }));
+      } catch (err) {
+        console.error("Erro ao enviar configuração:", err);
+        tg.showAlert("Erro ao enviar a configuração. Tente novamente.");
+      }
     }
   </script>
 </body>
