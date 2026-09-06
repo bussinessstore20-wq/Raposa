@@ -341,49 +341,83 @@
     tg.expand();
     tg.ready();
 
-    // Colar link: usa a API nativa do Telegram quando disponível,
-    // com fallback para Clipboard API e para colagem manual.
+    // Colar link
+    // Telegram exige que a leitura da área de transferência seja solicitada
+    // durante uma interação do usuário. O método readTextFromClipboard()
+    // usa a API nativa do Telegram e é mais confiável dentro do Mini App.
+    let aguardandoClipboard = false;
+
+    function preencherLink(texto) {
+      const campo = document.getElementById('linkVitrine');
+      if (!texto) return false;
+
+      campo.value = texto.trim();
+      campo.focus();
+      campo.dispatchEvent(new Event('input', { bubbles: true }));
+      campo.dispatchEvent(new Event('change', { bubbles: true }));
+
+      if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+      }
+      return true;
+    }
+
+    // Recebe a resposta nativa do Telegram caso a versão da biblioteca
+    // não registre o callback automaticamente.
+    if (tg.onEvent) {
+      tg.onEvent('clipboardTextReceived', function(data) {
+        if (data && data.data) {
+          preencherLink(data.data);
+        } else if (aguardandoClipboard && tg.showAlert) {
+          tg.showAlert('Não foi possível ler a área de transferência. Verifique se o Mini App foi aberto pelo Telegram e tente novamente.');
+        }
+        aguardandoClipboard = false;
+      });
+    }
+
     async function colarLink() {
       const campo = document.getElementById('linkVitrine');
       campo.focus();
+      aguardandoClipboard = true;
 
       try {
-        // Telegram WebApp possui acesso ao clipboard em versões compatíveis.
+        // 1) API oficial do Telegram Mini App.
         if (typeof tg.readTextFromClipboard === 'function') {
           tg.readTextFromClipboard(function(texto) {
-            if (texto) {
-              campo.value = texto.trim();
-              campo.dispatchEvent(new Event('input', { bubbles: true }));
-              if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-              }
+            aguardandoClipboard = false;
+
+            if (texto && texto.trim()) {
+              preencherLink(texto);
             } else if (tg.showAlert) {
-              tg.showAlert('A área de transferência está vazia.');
+              tg.showAlert('A área de transferência está vazia ou o Telegram bloqueou o acesso.');
             }
           });
           return;
         }
 
-        // Fallback para navegadores que permitem Clipboard API.
+        // 2) Fallback para navegador/WebView que permita Clipboard API.
         if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
           const texto = await navigator.clipboard.readText();
-          if (texto) {
-            campo.value = texto.trim();
-            campo.dispatchEvent(new Event('input', { bubbles: true }));
-            if (tg.HapticFeedback) {
-              tg.HapticFeedback.notificationOccurred('success');
-            }
+          aguardandoClipboard = false;
+
+          if (texto && texto.trim()) {
+            preencherLink(texto);
             return;
           }
         }
 
+        aguardandoClipboard = false;
         if (tg.showAlert) {
-          tg.showAlert('Não foi possível acessar a área de transferência. Toque e segure o campo e escolha "Colar".');
+          tg.showAlert('Toque e segure no campo e escolha "Colar".');
         }
       } catch (err) {
-        console.error('Erro ao colar:', err);
+        console.error('Erro ao ler clipboard:', err);
+        aguardandoClipboard = false;
+
+        // Último recurso: deixa o teclado/menu de colagem disponível.
+        campo.focus();
         if (tg.showAlert) {
-          tg.showAlert('Não foi possível acessar a área de transferência. Toque e segure o campo e escolha "Colar".');
+          tg.showAlert('O Telegram não permitiu a leitura automática. Toque e segure no campo e escolha "Colar".');
         }
       }
     }
