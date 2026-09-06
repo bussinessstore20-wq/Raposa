@@ -251,6 +251,11 @@
       box-shadow: 0 4px 15px var(--accent-glow);
     }
 
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .footer-note {
       text-align: center;
       font-size: 0.75rem;
@@ -265,7 +270,7 @@
 </head>
 <body>
 
-  <!-- Topo da Marca (Fundo Quase Preto no Círculo da Raposa) -->
+  <!-- Topo da Marca -->
   <div class="brand-header">
     <div class="brand-avatar">🦊</div>
     <div class="brand-title">
@@ -280,7 +285,7 @@
       <i class="fa-solid fa-sliders"></i> Painel de Automação
     </div>
 
-    <!-- Campo URL da Vitrine (CAMPO VAZIO + BOTÃO DE COLAR AO LADO) -->
+    <!-- Campo URL da Vitrine -->
     <div class="field-group">
       <label><i class="fa-solid fa-link"></i> Link da Vitrine Mercado Livre</label>
       <div class="input-wrapper-paste">
@@ -368,8 +373,9 @@
       elemento.classList.add('active');
     }
 
-    // Disparo dos dados para o Python do Bot
-    function enviarConfiguracao() {
+    // Disparo dos dados para o Python do Bot com tratamento de falhas e feedback visual
+    async function enviarConfiguracao() {
+      const btnSubmit = document.querySelector('.btn-submit');
       const link = document.getElementById('linkVitrine').value.trim();
       const intervalo = document.getElementById('intervalo').value;
       const quantidade = document.getElementById('quantidade').value;
@@ -383,15 +389,52 @@
         tg.HapticFeedback.impactOccurred('medium');
       }
 
+      // Prepara o objeto de dados incluindo informações de autenticação do usuário
+      const payload = {
+        link: link,
+        intervalo: parseInt(intervalo),
+        quantidade: parseInt(quantidade),
+        user_id: tg.initDataUnsafe?.user?.id || null,
+        initData: tg.initData || ""
+      };
+
+      // Trava o botão e ativa o estado de carregamento
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...`;
+
       try {
-        tg.sendData(JSON.stringify({
-          link: link,
-          intervalo: parseInt(intervalo),
-          quantidade: parseInt(quantidade)
-        }));
+        // Tenta enviar diretamente via API do WebApp (Keyboard Buttons)
+        tg.sendData(JSON.stringify(payload));
       } catch (err) {
-        console.error("Erro ao enviar configuração:", err);
-        tg.showAlert("Erro ao enviar a configuração. Tente novamente.");
+        console.warn("sendData falhou (não aberto por Keyboard Button). Tentando via API Webhook...", err);
+
+        // Fallback via HTTP POST caso o modo sendData não seja suportado no tipo de botão utilizado
+        /* 
+           Se você utiliza um servidor Webhook (Flask/FastAPI), 
+           descomente o trecho abaixo e altere a URL.
+        */
+        /*
+        try {
+          const response = await fetch('https://seu-servidor.com/api/configurar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            tg.showAlert("Configuração enviada com sucesso!");
+            tg.close();
+            return;
+          }
+        } catch (apiErr) {
+          console.error("Erro na API de fallback:", apiErr);
+        }
+        */
+
+        // Restaura o botão caso ocorra erro
+        tg.showAlert("Erro ao enviar dados nativos. Certifique-se de abrir o aplicativo pelo botão do teclado.");
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<i class="fa-solid fa-rocket"></i> INICIAR POSTAGENS AUTO`;
       }
     }
   </script>
