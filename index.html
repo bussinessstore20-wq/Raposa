@@ -255,6 +255,7 @@
       elemento.classList.add('active');
     }
 
+    // CORREÇÃO EXCLUSIVA DO BOTÃO ENVIAR (Sem alterar o layout)
     async function enviarConfiguracao() {
       const link = document.getElementById('linkVitrine').value.trim();
       const intervalo = document.getElementById('intervalo').value;
@@ -270,12 +271,10 @@
         return;
       }
 
-      // Muda o botão para estado de carregamento
       btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO PARA A NUVEM...';
       btnSubmit.disabled = true;
 
       try {
-        // Envio direto para o Render via HTTP POST
         const resposta = await fetch('https://bot-raposa-cacadora.onrender.com/api/ordem', {
           method: 'POST',
           headers: {
@@ -283,3 +282,34 @@
           },
           body: JSON.stringify({
             link: link,
+            intervalo: parseInt(intervalo),
+            quantidade: parseInt(quantidade)
+          })
+        });
+
+        if (resposta.ok) {
+          btnSubmit.innerHTML = '<i class="fa-solid fa-circle-check"></i> ORDEM INICIADA COM SUCESSO!';
+          btnSubmit.style.background = '#22c55e';
+          
+          if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+          setTimeout(() => {
+            tg.close();
+          }, 1500);
+        } else {
+          throw new Error('Erro na resposta do servidor');
+        }
+      } catch (erro) {
+        btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane"></i> INICIAR POSTAGENS AUTO';
+        btnSubmit.disabled = false;
+        
+        if (tg.showAlert) {
+          tg.showAlert("Erro ao conectar com a nuvem. Tente novamente.");
+        } else {
+          alert("Erro ao conectar com a nuvem. Tente novamente.");
+        }
+      }
+    }
+  </script>
+</body>
+</html>
