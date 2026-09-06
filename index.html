@@ -2,108 +2,309 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Raposa Caçadora - Painel VIP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Raposa Caçadora</title>
   
-  <!-- SDK do Telegram & Ícones FontAwesome -->
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #05070a 0%, #0d111a 100%);
-      --card-bg: rgba(15, 23, 36, 0.85);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --primary-accent: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      --accent-glow: rgba(249, 115, 22, 0.45);
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-orange: #f97316;
+      --accent-orange-hover: #ea580c;
       --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --input-bg: rgba(6, 10, 17, 0.9);
-      --input-border: rgba(255, 255, 255, 0.12);
-      --radius: 16px;
+      --text-muted: #94a3b8;
+      --input-bg: #0f172a;
+      --border-color: #334155;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: var(--bg-gradient);
+      background-color: var(--bg-color);
       color: var(--text-main);
-      min-height: 100vh;
-      padding: 20px 16px 30px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Header Profile */
-    .brand-header {
-      display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 4px 0;
+      min-height: 100vh;
     }
 
-    /* Logo da Raposa com fundo quase preto para destaque máximo */
-    .brand-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #080b11;
-      border: 2px solid #f97316;
+    .container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent-orange);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      box-shadow: 0 0 25px var(--accent-glow);
+      gap: 8px;
     }
 
-    .brand-title h1 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #ffffff, #fdba74);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
 
-    .brand-title p {
-      font-size: 0.8rem;
-      color: var(--text-sub);
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-top: 2px;
     }
 
-    .status-badge {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background-color: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #22c55e;
+    .input-group {
+      display: flex;
+      gap: 8px;
     }
 
-    /* Cartões Glassmorphism */
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
-    }
-
-    .card-title {
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
       font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .btn-paste {
+      background-color: var(--border-color);
+      color: var(--text-main);
+      border: none;
+      border-radius: 8px;
+      padding: 0 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .btn-paste:active {
+      opacity: 0.8;
+    }
+
+    .grid-presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .time-btn {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .time-btn.active {
+      background-color: var(--accent-orange);
+      border-color: var(--accent-orange);
+      color: #fff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background-color: var(--accent-orange);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
       font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Cabeçalho -->
+    <div class="header">
+      <h1><i class="fa-solid fa-paw"></i> RAPOSA CAÇADORA</h1>
+      <p>Configuração de Postagens Automáticas</p>
+    </div>
+
+    <!-- Campo de Link -->
+    <div class="card">
+      <label class="label">
+        <i class="fa-solid fa-link" style="color: var(--accent-orange);"></i> Link da Vitrine / Oferta
+      </label>
+      <div class="input-group">
+        <input type="text" id="linkVitrine" placeholder="https://mercadolivre.com.br/sec/..." autocomplete="off">
+        <button class="btn-paste" onclick="colarLink()">
+          <i class="fa-regular fa-clipboard"></i> Colar
+        </button>
+      </div>
+    </div>
+
+    <!-- Campo de Quantidade -->
+    <div class="card">
+      <label class="label">
+        <i class="fa-solid fa-boxes-stacked" style="color: var(--accent-orange);"></i> Quantidade de Ofertas
+      </label>
+      <input type="number" id="quantidade" value="5" min="1" max="50">
+    </div>
+
+    <!-- Campo de Intervalo -->
+    <div class="card">
+      <label class="label">
+        <i class="fa-solid fa-clock" style="color: var(--accent-orange);"></i> Intervalo entre Postagens
+      </label>
+      <input type="number" id="intervalo" value="300" placeholder="Tempo em segundos">
+      
+      <div class="grid-presets">
+        <div class="time-btn active" onclick="setTempo(10, this)">10 seg</div>
+        <div class="time-btn" onclick="setTempo(60, this)">1 min</div>
+        <div class="time-btn" onclick="setTempo(300, this)">5 min</div>
+        <div class="time-btn" onclick="setTempo(600, this)">10 min</div>
+      </div>
+    </div>
+
+    <!-- Botão de Ação -->
+    <button class="btn-submit" onclick="enviarConfiguracao()">
+      <i class="fa-solid fa-paper-plane"></i> INICIAR POSTAGENS AUTO
+    </button>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+
+    // Tenta colar via Clipboard da Web / Fallback com foco
+    async function colarLink() {
+      const input = document.getElementById('linkVitrine');
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const texto = await navigator.clipboard.readText();
+          if (texto) {
+            input.value = texto;
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            return;
+          }
+        }
+      } catch (err) {
+        // Se a permissão for negada pelo navegador, foca o campo para o usuário colar manualmente
+        input.focus();
+        input.select();
+        if (tg.showAlert) {
+          tg.showAlert("Cole manualmente segurando o dedo sobre o campo de texto.");
+        }
+      }
+    }
+
+    // Selecionador de tempo rápido
+    function setTempo(segundos, elemento) {
+      document.getElementById('intervalo').value = segundos;
+      document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+      elemento.classList.add('active');
+    }
+
+    // Função de envio com feedback antes de fechar
+    function enviarConfiguracao() {
+      const link = document.getElementById('linkVitrine').value.trim();
+      const intervalo = document.getElementById('intervalo').value;
+      const quantidade = document.getElementById('quantidade').value;
+
+      if (!link) {
+        if (tg.showAlert) {
+          tg.showAlert("Por favor, cole um link de vitrine válido antes de continuar!");
+        } else {
+          alert("Por favor, cole um link de vitrine válido antes de continuar!");
+        }
+        return;
+      }
+
+      if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('medium');
+      }
+
+      // Envia a estrutura JSON diretamente para o escutador Python
+      tg.sendData(JSON.stringify({
+        link: link,
+        intervalo: parseInt(intervalo),
+        quantidade: parseInt(quantidade)
+      }));
+
+      // Animação de sucesso no botão
+      const btnSubmit = document.querySelector('.btn-submit');
+      btnSubmit.innerHTML = '<i class="fa-solid fa-circle-check"></i> ENVIADO PARA A NUVEM!';
+      btnSubmit.style.background = '#22c55e';
+
+      // Aguarda 1.5s antes de fechar o Mini App
+      setTimeout(() => {
+        tg.close();
+      }, 1500);
+    }
+  </script>
+</body>
+</html>      font-weight: 700;
       color: #fdba74;
       text-transform: uppercase;
       letter-spacing: 0.05em;
